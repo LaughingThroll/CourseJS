@@ -438,6 +438,7 @@ function stopAnimation() {
   while (timeouts.length > 0) {
     clearTimeout(timeouts.pop());
   }
+  return true
   // document.getElementById("stopButton").hidden = true;
 }
 
