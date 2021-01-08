@@ -1,27 +1,71 @@
 const canvas = document.querySelector('#canvas')
 const ctx = canvas.getContext('2d')
-canvas.width = document.body.clientWidth
-canvas.height = window.innerHeight
 
+canvas.width = document.body.clientWidth
+canvas.height = document.body.clientHeight
 window.addEventListener('resize', () => {
-  canvas.height = window.innerHeight
+  canvas.height = document.body.clientHeight
   canvas.width = document.body.clientWidth
 })
 
-let velocity = {
-  x: 5,
-  y: 5
-}
-
-let acceleration = {
-  x: 0.1,
-  y: 0.1
-}
-
-let coords = {
- x: 100, 
- y: 100 
-}
+let arr = [
+  {
+    coords: {
+      x: 35,
+      y: 35
+    },
+    velocity: {
+      x: 1,
+      y: 1
+    },
+    accelearation: {
+      x: .1,
+      y: .1
+    }
+  },
+  {
+    coords: {
+      x: 135,
+      y: 535
+    },
+    velocity: {
+      x: 1,
+      y: 1
+    },
+    accelearation: {
+      x: .2,
+      y: .2
+    }
+  },
+  {
+    coords: {
+      x: 535,
+      y: 535
+    },
+    velocity: {
+      x: 2,
+      y: 2
+    },
+    accelearation: {
+      x: .1,
+      y: .1
+    }
+  },
+  {
+    coords: {
+      x: canvas.width - 35,
+      y: canvas.height - 35
+    },
+    velocity: {
+      x: 5,
+      y: 5
+    },
+    accelearation: {
+      x: .1,
+      y: .1
+    }
+  }
+]
 
 
 function circle(x, y) {
@@ -34,17 +78,19 @@ function circle(x, y) {
 }
 
 
-function addCoords(coords, velocity) { 
+function addCoords(coords, velocity) {
+  console.log('coords', coords.x)
+  console.log('velocity', velocity.x)
   return {
-    x: coords.x += velocity.x,
-    y: coords.y += velocity.y
+    x: coords.x + velocity.x,
+    y: coords.y + velocity.y
   }
 }
 
-function subCoords(coords, velocity) { 
+function subCoords(coords, velocity) {
   return {
-    x: coords.x -= velocity.x,
-    y: coords.y -= velocity.y
+    x: coords.x - velocity.x,
+    y: coords.y - velocity.y
   }
 }
 
@@ -59,49 +105,43 @@ function updateVelocity(velocity, acceleration) {
 function updateAcceleration(coords, centerCoords) {
   const G = 2000
   const diff = subCoords(coords, centerCoords)
-  const distance = (diff.x ** 2 + diff.y ** 2) ** (3/2)
+  const distance = (diff.x ** 2 + diff.y ** 2) ** (3 / 2)
+
   return {
     x: -diff.x * G / distance,
     y: -diff.y * G / distance
   }
 }
+
 function checkCoords(coords, velocity) {
-  if (coords.y < 0 || coords.y >= canvas.height) {
-    if (coords.y < 0) {
-      coords.y = 10
-      return
-    }  
+  const R = 33
+  if (coords.y < R || coords.y > canvas.height - R) {
+    if (coords.y < R) coords.y = R
     velocity.y = -velocity.y
   }
-  if (coords.x < 0 || coords.x >= canvas.width) {
-    if (coords.x < 0) {
-      coords.x = 10
-      return
-    }
+  if (coords.x < R || coords.x > canvas.width - R) {
+    if (coords.x < R) coords.x = R
     velocity.x = -velocity.x
   }
-} 
-let center = { x: canvas.width / 2, y: canvas.height / 2 }
-setInterval(() => {
+}
 
+function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   
-  coords = updateCoords(coords, velocity)
-  circle(coords.x, coords.y)
-  
-  // acceleration = updateAcceleration(coords, center)
-  
-  velocity = updateVelocity(velocity, acceleration)
+  arr.forEach(star => {
+    circle(star.coords.x, star.coords.y)
+    star.acceleration = updateAcceleration(star.coords, { x: canvas.width / 2, y: canvas.height / 2 })
+    star.coords = updateCoords(star.coords, star.velocity)
+    star.velocity = updateVelocity(star.velocity, star.acceleration)
+    checkCoords(star.coords, star.velocity)
+  }) 
+  requestAnimationFrame(render)
+}
+render()
 
 
-  checkCoords(coords, velocity)
-  
-  
-  
-}, 10)  
-  
 
-  
+
 
 
 

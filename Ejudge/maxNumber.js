@@ -1,4 +1,4 @@
-function maxConsistentLength(string) {
+function maxNumber(string) {
   const arr = string.split(/\n/).map(Number)
   let max = arr[0]
   for (let i = 0; i < arr.length; i++) {
@@ -9,4 +9,4 @@ function maxConsistentLength(string) {
 
 
 
-console.log(maxConsistentLength('1\n21\n9\n0'))
+console.log(maxNumber('1\n21\n9\n0'))
